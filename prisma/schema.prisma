@@ -6,10 +6,48 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  user_id Int @id @default(autoincrement())
+  email String @unique
+  name String
+  lastname String?
+  password String
+  prestamos prestamo[]
+  role Roles @default(USER)
+}
+
+
+enum Roles {
+  USER
+  ADMIN
+}
+
+model prestamo {
+  prestamo_id Int @id @default(autoincrement())
+  fechaInicio DateTime @default(now())
+  fechaFin DateTime
+  estado Boolean
+
+  user User @relation(fields: [user_id], references: [user_id])
+  user_id Int
+}
+
+model book {
+  book_id Int @id @default(autoincrement())
+  title String
+  category String
+  estado Estados
+}
+
+enum Estados {
+  PRESTADO
+  RESERVADO
+  DISPONIBLE
 }
