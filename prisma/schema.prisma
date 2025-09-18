@@ -14,36 +14,36 @@ datasource db {
 }
 
 model User {
-  user_id Int @id @default(autoincrement())
-  email String @unique
-  name String
-  lastname String?
-  password String
+  user_id   Int        @id @default(autoincrement())
+  email     String     @unique
+  name      String
+  lastname  String?
+  password  String
   prestamos prestamo[]
-  role Roles @default(USER)
+  role      Roles      @default(ESTUDIANTE)
 }
 
-
 enum Roles {
-  USER
-  ADMIN
+  ESTUDIANTE
+  DOCENTE
+  BIBLIOTECARIO
 }
 
 model prestamo {
-  prestamo_id Int @id @default(autoincrement())
+  prestamo_id Int      @id @default(autoincrement())
   fechaInicio DateTime @default(now())
-  fechaFin DateTime
-  estado Boolean
+  fechaFin    DateTime
+  estado      Boolean
 
-  user User @relation(fields: [user_id], references: [user_id])
+  user    User @relation(fields: [user_id], references: [user_id])
   user_id Int
 }
 
 model book {
-  book_id Int @id @default(autoincrement())
-  title String
+  book_id  Int     @id @default(autoincrement())
+  title    String
   category String
-  estado Estados
+  estado   Estados
 }
 
 enum Estados {
