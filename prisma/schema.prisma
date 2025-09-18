@@ -38,6 +38,9 @@ model prestamo {
 
   user    User @relation(fields: [user_id], references: [user_id])
   user_id Int
+
+  book    book @relation(fields: [book_id], references: [book_id])
+  book_id Int
 }
 
 model book {
@@ -45,6 +48,8 @@ model book {
   title    String
   category String
   estado   Estados
+
+  prestamos prestamo[]
 }
 
 enum Estados {
