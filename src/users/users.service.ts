@@ -52,4 +52,14 @@ export class UsersService {
     }
   }
 
+  async findByEmail(email: string) {
+    try {
+      return await this.prisma.user.findUnique({
+        where: { email },
+      });
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
 }
