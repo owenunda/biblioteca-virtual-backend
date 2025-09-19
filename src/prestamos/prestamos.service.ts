@@ -3,6 +3,60 @@ import { PrismaService } from '../prisma.service';
 
 @Injectable()
 export class PrestamosService {
+  async getStats() {
+    try {
+      const totalLibros = await this.prisma.book.count();
+      const totalPrestamosActivos = await this.prisma.prestamo.count({ where: { estado: true } });
+      const totalPrestamosDevueltos = await this.prisma.prestamo.count({ where: { estado: false } });
+
+      const librosMasPrestadosRaw = await this.prisma.prestamo.groupBy({
+        by: ['book_id'],
+        _count: { book_id: true },
+        orderBy: { _count: { book_id: 'desc' } },
+        take: 5,
+      });
+      const librosMasPrestados = await Promise.all(
+        librosMasPrestadosRaw.map(async (l) => {
+          const book = await this.prisma.book.findUnique({ where: { book_id: l.book_id } });
+          return { titulo: book?.title ?? '', vecesPrestado: l._count.book_id };
+        })
+      );
+
+      const usuariosTopRaw = await this.prisma.prestamo.groupBy({
+        by: ['user_id'],
+        _count: { user_id: true },
+        orderBy: { _count: { user_id: 'desc' } },
+        take: 5,
+      });
+      const usuariosTop = await Promise.all(
+        usuariosTopRaw.map(async (u) => {
+          const user = await this.prisma.user.findUnique({ where: { user_id: u.user_id } });
+          return { nombre: user?.name ?? '', prestamos: u._count.user_id };
+        })
+      );
+
+      const prestamosPorMesRaw = await this.prisma.prestamo.findMany({
+        select: { fechaInicio: true },
+      });
+      const prestamosPorMesMap = {};
+      prestamosPorMesRaw.forEach((p) => {
+        const mes = p.fechaInicio.toISOString().slice(0, 7);
+        prestamosPorMesMap[mes] = (prestamosPorMesMap[mes] || 0) + 1;
+      });
+      const prestamosPorMes = Object.entries(prestamosPorMesMap).map(([mes, cantidad]) => ({ mes, cantidad }));
+
+      return {
+        totalLibros,
+        totalPrestamosActivos,
+        totalPrestamosDevueltos,
+        librosMasPrestados,
+        usuariosTop,
+        prestamosPorMes,
+      };
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
   constructor(private prisma: PrismaService) {}
 
   async getAllPrestamos() {

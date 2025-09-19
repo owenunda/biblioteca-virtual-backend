@@ -4,6 +4,10 @@ import { CreatePrestamoDto } from './dto/create-prestamo.dto';
 
 @Controller('prestamos')
 export class PrestamosController {
+  @Get('stats')
+  getStats() {
+    return this.prestamosService.getStats();
+  }
   constructor(private readonly prestamosService: PrestamosService) {}
 
   @Get()
