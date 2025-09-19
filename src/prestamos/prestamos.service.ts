@@ -7,7 +7,22 @@ export class PrestamosService {
 
   async getAllPrestamos() {
     try {
-      return await this.prisma.prestamo.findMany();
+      const prestamos = await this.prisma.prestamo.findMany({
+        include: {
+          book: true,
+          user: true,
+        },
+      });
+      return prestamos.map((p) => ({
+        prestamo_id: p.prestamo_id,
+        estado: p.estado ? 'activo' : 'devuelto',
+        fechaInicio: p.fechaInicio.toISOString().split('T')[0],
+        fechaFin: p.fechaFin.toISOString().split('T')[0],
+        fechaDevolucion: !p.estado && p.fechaFin ? p.fechaFin.toISOString().split('T')[0] : null,
+        titulo: p.book?.title ?? '',
+        categoria: p.book?.category ?? '',
+        nombre: p.user?.name ?? '',
+      }));
     } catch (error) {
       throw new Error(error.message);
     }
