@@ -1,3 +1,107 @@
+# Biblioteca Virtual Backend
+
+URL desplegada: https://biblioteca-virtual-backend-production-25d1.up.railway.app
+
+## Endpoints principales
+
+### Usuarios
+
+**Registrar usuario (estudiante/docente)**
+- **POST** `/users`
+- **Body:**
+```json
+{
+  "name": "Nombre",
+  "lastname": "Apellido",
+  "email": "correo@ejemplo.com",
+  "password": "contraseña",
+  "role": "ESTUDIANTE" // o "DOCENTE"
+}
+```
+
+---
+
+### Autenticación
+
+**Login**
+- **POST** `/auth/login`
+- **Body:**
+```json
+{
+  "email": "correo@ejemplo.com",
+  "password": "contraseña"
+}
+```
+- **Respuesta:**
+```json
+{
+  "access_token": "jwt_token",
+  "user": {
+    "id": 1,
+    "name": "Nombre",
+    "email": "correo@ejemplo.com",
+    "role": "ESTUDIANTE"
+  }
+}
+```
+
+---
+
+### Libros
+
+**Consultar catálogo de libros**
+- **GET** `/books?title=algo&category=algo`
+- **Query params opcionales:** `title`, `category`
+
+**Crear libro**
+- **POST** `/books`
+- **Body:**
+```json
+{
+  "title": "Título del libro",
+  "category": "Categoría",
+  "estado": "DISPONIBLE" // Opcional: DISPONIBLE, RESERVADO, PRESTADO
+}
+```
+
+---
+
+### Préstamos
+
+**Reservar libro**
+- **POST** `/prestamos/reservar`
+- **Body:**
+```json
+{
+  "user_id": 1,
+  "book_id": 2
+}
+```
+
+**Prestar libro**
+- **POST** `/prestamos/prestar`
+- **Body:**
+```json
+{
+  "user_id": 1,
+  "book_id": 2
+}
+```
+
+**Devolver libro**
+- **PUT** `/prestamos/devolver/:id`
+- **Parámetro:** `id` es el `prestamo_id` del préstamo a devolver
+
+---
+
+## Notas
+- Todos los endpoints devuelven datos en formato JSON.
+- Para endpoints protegidos, usa el token JWT en el header `Authorization: Bearer <token>`.
+- Los roles permitidos son: `ESTUDIANTE`, `DOCENTE`, `BIBLIOTECARIO`.
+
+---
+
+¿Dudas o necesitas ejemplos de respuesta? ¡Consulta este README o pregunta! 
 # Sistema de Gestión de Biblioteca Virtual
 
 Backend para un sistema de gestión de biblioteca virtual.

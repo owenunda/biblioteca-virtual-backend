@@ -1,10 +1,15 @@
-import { Controller, Post, Body, Put, Param } from '@nestjs/common';
+import { Controller, Post, Body, Put, Param, Get } from '@nestjs/common';
 import { PrestamosService } from './prestamos.service';
 import { CreatePrestamoDto } from './dto/create-prestamo.dto';
 
 @Controller('prestamos')
 export class PrestamosController {
   constructor(private readonly prestamosService: PrestamosService) {}
+
+  @Get()
+  getAll() {
+    return this.prestamosService.getAllPrestamos();
+  }
 
   @Post('reservar')
   reservar(@Body() dto: CreatePrestamoDto) {

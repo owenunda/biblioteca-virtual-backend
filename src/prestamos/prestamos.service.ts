@@ -5,6 +5,14 @@ import { PrismaService } from '../prisma.service';
 export class PrestamosService {
   constructor(private prisma: PrismaService) {}
 
+  async getAllPrestamos() {
+    try {
+      return await this.prisma.prestamo.findMany();
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
   async reservarLibro(userId: number, bookId: number) {
     // Cambia estado del libro a RESERVADO y crea prestamo
     try {
