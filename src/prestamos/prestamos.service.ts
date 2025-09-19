@@ -14,14 +14,20 @@ export class PrestamosService {
         },
       });
       return prestamos.map((p) => ({
+        id: p.prestamo_id,
         prestamo_id: p.prestamo_id,
         estado: p.estado ? 'activo' : 'devuelto',
-        fechaInicio: p.fechaInicio.toISOString().split('T')[0],
-        fechaFin: p.fechaFin.toISOString().split('T')[0],
+        fechaInicio: p.fechaInicio ? p.fechaInicio.toISOString().split('T')[0] : null,
+        fecha_inicio: p.fechaInicio ? p.fechaInicio.toISOString().split('T')[0] : null,
+        fechaFin: p.fechaFin ? p.fechaFin.toISOString().split('T')[0] : null,
+        fecha_fin: p.fechaFin ? p.fechaFin.toISOString().split('T')[0] : null,
         fechaDevolucion: !p.estado && p.fechaFin ? p.fechaFin.toISOString().split('T')[0] : null,
+        fecha_devolucion: !p.estado && p.fechaFin ? p.fechaFin.toISOString().split('T')[0] : null,
         titulo: p.book?.title ?? '',
+        libro: { titulo: p.book?.title ?? '', categoria: p.book?.category ?? '' },
         categoria: p.book?.category ?? '',
         nombre: p.user?.name ?? '',
+        usuario: { nombre: p.user?.name ?? '' },
       }));
     } catch (error) {
       throw new Error(error.message);
